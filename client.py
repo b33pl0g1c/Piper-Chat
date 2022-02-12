@@ -1,10 +1,8 @@
-from email import message
 import socket
 import threading
 import tkinter
 import tkinter.scrolledtext
 from tkinter import simpledialog
-from server import receive
 HOST='127.0.0.1'
 PORT='9989'
 
@@ -12,13 +10,13 @@ class client:
     def __init__(self,host,port):
         self.sock=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         self.sock.connect((host,port))
-        msg=tkinter.TK()
+        msg=tkinter.Tk()
         msg.withdraw()
         self.nickname = simpledialog.askstring("Nickname","Please Choose a nickname:",parent=msg)
         self.gui_done=False
         self.running=True
         gui_thread=threading.Thread(target=self.gui_loop)
-        receive_thread=threading.Thread(target=receive)
+        receive_thread=threading.Thread(target=self.receive)
         gui_thread.start()
         receive_thread.start()
     def gui_loop(self):
@@ -51,7 +49,7 @@ class client:
         exit(0)
     def write(self):
         msg=f"{self.nickname}:{self.input_area.get('1.0','end')}"
-        self.sock.send(message.encode('utf-8'))
+        self.sock.send(msg.encode('utf-8'))
         self.input_area.delete('1.0','end')
     def receive(self):
         while self.running:
@@ -73,7 +71,7 @@ class client:
                 self.sock.close()
                 break
 
-client=client(HOST,PORT)
+cli=client(HOST,PORT)
 
 
 
